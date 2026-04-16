@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All The Best!</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+      color: #00ff9f;
+      font-family: 'Courier New', monospace;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 1;
+      padding: 20px;
+      border: 2px solid #00ff9f;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #00ff9f;
+      background: rgba(0,0,0,0.6);
+      width: 90%;
+      max-width: 500px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+      animation: glow 2s infinite alternate;
+    }
+
+    p {
+      font-size: 1.1rem;
+    }
+
+    #typing {
+      display: none;
+      border-right: 2px solid #00ff9f;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: blink 1s infinite;
+    }
+
+    .progress-container {
+      width: 100%;
+      height: 20px;
+      border: 1px solid #00ff9f;
+      margin: 15px 0;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #00ff9f;
+      box-shadow: 0 0 10px #00ff9f;
+      transition: width 0.2s;
+    }
+
+    @keyframes blink {
+      0%, 50%, 100% { border-color: #00ff9f; }
+      25%, 75% { border-color: transparent; }
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #00ff9f; }
+      to { text-shadow: 0 0 25px #00ff9f; }
+    }
+
+    .btn {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: transparent;
+      border: 1px solid #00ff9f;
+      color: #00ff9f;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: #00ff9f;
+      color: black;
+      box-shadow: 0 0 10px #00ff9f;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+
+  <div class="content">
+    <h1>💻 SYSTEM MESSAGE 💻</h1>
+
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <p id="loadingText">Initializing...</p>
+
+    <p id="typing"></p>
+
+    <h2>🚀 ALL THE BEST FOR YOUR EXAMS! 🚀</h2>
+    <p>Go smash it like a true hacker 💚</p>
+    <button class="btn" onclick="reveal()">Click to Unlock Secret</button>
+    <p id="secret" style="display:none; margin-top:10px;">🔥 You are going to do AMAZING! Believe in yourself 🔥</p>
+  </div>
+
+  <script>
+    // MATRIX EFFECT
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%";
+    const fontSize = 16;
+    const columns = canvas.width / fontSize;
+
+    const drops = [];
+    for (let x = 0; x < columns; x++) drops[x] = 1;
+
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#00ff9f";
+      ctx.font = fontSize + "px monospace";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+          drops[i] = 0;
+
+        drops[i]++;
+      }
+    }
+
+    setInterval(draw, 33);
+
+    // LOADING BAR
+    let progress = 0;
+    const progressBar = document.getElementById("progressBar");
+    const loadingText = document.getElementById("loadingText");
+
+    const loadingMessages = [
+      "Initializing...",
+      "Connecting to secure server...",
+      "Bypassing firewall...",
+      "Decrypting data...",
+      "Finalizing..."
+    ];
+
+    let msgIndex = 0;
+
+    const loader = setInterval(() => {
+      progress += Math.random() * 10;
+      if (progress > 100) progress = 100;
+
+      progressBar.style.width = progress + "%";
+
+      if (progress > (msgIndex + 1) * 20 && msgIndex < loadingMessages.length - 1) {
+        msgIndex++;
+        loadingText.textContent = loadingMessages[msgIndex];
+      }
+
+      if (progress === 100) {
+        clearInterval(loader);
+        loadingText.textContent = "Access Granted ✔";
+        setTimeout(startTyping, 800);
+      }
+    }, 200);
+
+    // TYPING ANIMATION
+    const message = "Accessing Secure Server...\nDecrypting Message...\nAccess Granted ✔";
+    const typingElement = document.getElementById("typing");
+    let index = 0;
+
+    function startTyping() {
+      typingElement.style.display = "inline-block";
+      typeText();
+    }
+
+    function typeText() {
+      if (index < message.length) {
+        if (message.charAt(index) === '\n') {
+          typingElement.innerHTML += '<br>';
+        } else {
+          typingElement.innerHTML += message.charAt(index);
+        }
+        index++;
+        setTimeout(typeText, 40);
+      }
+    }
+
+    function reveal() {
+      document.getElementById('secret').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
